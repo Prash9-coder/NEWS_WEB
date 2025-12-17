@@ -51,7 +51,7 @@ const LiveTV = () => {
     return (
         <div className="mt-[140px] min-h-screen bg-gray-900">
             <div className="max-w-7xl mx-auto px-4 py-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-[60px]">
                     {/* Main Content */}
                     <div className="lg:col-span-8">
                         <motion.div
@@ -163,7 +163,7 @@ const LiveTV = () => {
 
                     {/* Right Sidebar */}
                     <div className="lg:col-span-4">
-                        <div className="sticky top-36 space-y-6">
+                        <div className="sticky top-36 space-y-6 mt-[90px]">
                             {/* More Channels */}
                             <div className="bg-gray-800 rounded-lg p-6">
                                 <h3 className="text-white font-bold text-lg mb-4">📺 More Channels</h3>
