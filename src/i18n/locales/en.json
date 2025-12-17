@@ -1,0 +1,63 @@
+{
+    "header": {
+        "home": "Home",
+        "india": "India",
+        "world": "World",
+        "business": "Business",
+        "technology": "Technology",
+        "sports": "Sports",
+        "entertainment": "Entertainment",
+        "lifestyle": "Lifestyle",
+        "videos": "Videos",
+        "search": "Search news...",
+        "searchButton": "Search"
+    },
+    "breaking": {
+        "label": "BREAKING"
+    },
+    "home": {
+        "topStories": "Top Stories",
+        "latestNews": "Latest News",
+        "viewAll": "View All",
+        "trending": "Trending Now",
+        "videos": "Top Videos",
+        "newsletter": "Stay Updated!",
+        "newsletterText": "Subscribe to get latest news delivered to your inbox",
+        "subscribe": "Subscribe"
+    },
+    "article": {
+        "share": "Share this article",
+        "comments": "Comments",
+        "postComment": "Post Comment",
+        "relatedArticles": "Related Articles",
+        "readMore": "Read More",
+        "views": "views",
+        "readTime": "min read"
+    },
+    "category": {
+        "india": "India News",
+        "world": "World News",
+        "business": "Business News",
+        "technology": "Technology News",
+        "sports": "Sports News",
+        "entertainment": "Entertainment News",
+        "lifestyle": "Lifestyle News",
+        "latestFrom": "Latest updates and breaking news from"
+    },
+    "footer": {
+        "about": "About Us",
+        "contact": "Contact",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "categories": "Categories",
+        "company": "Company",
+        "legal": "Legal",
+        "newsletter": "Newsletter",
+        "copyright": "All rights reserved."
+    },
+    "notFound": {
+        "title": "Page Not Found",
+        "message": "Oops! The page you're looking for doesn't exist.",
+        "goHome": "Go Home"
+    }
+}
