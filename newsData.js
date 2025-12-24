@@ -6,109 +6,120 @@ let allArticles = [];
 let isLoading = false;
 let isDataFetched = false;
 let currentLanguage = null;
+let currentCategory = null;
+
+// ✅ News API Key from environment variables
+const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 
 const LANGUAGE_MAP = {
-    'en': 'ENGLISH',
-    'te': 'TELUGU',
-    'hi': 'HINDI',
-    'ta': 'TAMIL',
-    'kn': 'KANNADA'
+    'en': 'en',
+    'te': 'en', // Telugu - fallback to English (NewsAPI doesn't support Telugu)
+    'hi': 'hi',
+    'ta': 'en', // Tamil - fallback
+    'kn': 'en', // Kannada - fallback
+};
+
+// ✅ Category to NewsAPI query mapping
+const CATEGORY_QUERIES = {
+    'home': 'india news',
+    'india': 'india',
+    'world': 'world international',
+    'politics': 'politics government',
+    'business': 'business economy finance',
+    'technology': 'technology tech AI software',
+    'sports': 'sports cricket football IPL',
+    'entertainment': 'entertainment bollywood movies',
+    'lifestyle': 'lifestyle health food travel',
 };
 
 const getCurrentLanguage = () => {
     const i18nLang = localStorage.getItem('i18nextLng') || 'en';
-    return LANGUAGE_MAP[i18nLang] || 'ENGLISH';
+    return LANGUAGE_MAP[i18nLang] || 'en';
 };
 
-// ✅ ALWAYS use proxy path - Works in both dev and production
-const getApiUrl = (language) => {
-    return `/api/news/posts?language=${language}`;
-};
-
-export const fetchNewsData = async (forceRefresh = false) => {
+// ✅ Fetch from NewsAPI
+export const fetchNewsData = async (category = 'home', forceRefresh = false) => {
     const apiLanguage = getCurrentLanguage();
+    const normalizedCategory = category?.toLowerCase() || 'home';
 
-    if (currentLanguage && currentLanguage !== apiLanguage) {
-        console.log('🌐 Language changed to:', apiLanguage);
-        isDataFetched = false;
-        allArticles = [];
+    // Check cache
+    if (isLoading) {
+        console.log('⏳ Already loading...');
+        while (isLoading) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return allArticles;
     }
 
-    if (isLoading || (isDataFetched && !forceRefresh)) {
-        console.log('📦 Cached articles:', allArticles.length);
+    if (isDataFetched && !forceRefresh && currentCategory === normalizedCategory) {
+        console.log('📦 Using cache:', allArticles.length);
         return allArticles;
     }
 
     isLoading = true;
     currentLanguage = apiLanguage;
+    currentCategory = normalizedCategory;
 
     try {
-        const apiUrl = getApiUrl(apiLanguage);
+        const query = CATEGORY_QUERIES[normalizedCategory] || normalizedCategory;
+
+        // ✅ NewsAPI URL
+        const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=${apiLanguage}&sortBy=publishedAt&pageSize=50&apiKey=${NEWS_API_KEY}`;
 
         console.log('═══════════════════════════════════════════');
-        console.log('📡 Fetching from:', apiUrl);
-        console.log('🌐 Language:', currentLanguage);
+        console.log('📡 NewsAPI Request');
+        console.log('   Category:', normalizedCategory);
+        console.log('   Query:', query);
+        console.log('   Language:', apiLanguage);
 
-        // ✅ Simple fetch - NO custom headers (CORS safe)
         const response = await fetch(apiUrl);
 
-        console.log('📥 Status:', response.status);
-
         if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('✅ Response received');
-        console.log('📊 Success:', data.success);
-        console.log('📊 Total:', data.total);
 
-        let articlesArray = [];
+        console.log('📥 Status:', data.status);
+        console.log('📥 Total Results:', data.totalResults);
 
-        if (data.info && Array.isArray(data.info)) {
-            articlesArray = data.info;
-            console.log('✅ Found in data.info:', articlesArray.length);
-        } else if (Array.isArray(data)) {
-            articlesArray = data;
-        } else if (data.data && Array.isArray(data.data)) {
-            articlesArray = data.data;
-        } else if (data.posts && Array.isArray(data.posts)) {
-            articlesArray = data.posts;
+        if (data.status !== 'ok' || !data.articles) {
+            throw new Error('Invalid API response');
         }
 
-        if (articlesArray.length > 0) {
-            console.log('🔍 First article keys:', Object.keys(articlesArray[0]));
-        }
-
-        allArticles = articlesArray.map((article, index) => ({
-            id: article.id || article._id || article.post_id || article.newsId || index + 1,
-            title: article.title || article.heading || article.headline || article.newsTitle || 'No Title',
-            slug: article.slug || article.url_slug || article.seoUrl || createSlug(article.title || article.heading || article.newsTitle),
-            category: article.category || article.cat || article.section || article.categoryName || 'Home',
-            excerpt: article.excerpt || article.description || article.summary || article.shortDesc || article.short_description || '',
-            content: article.content || article.body || article.fullContent || article.newsContent || article.text || '',
-            image: article.image || article.featured_image || article.thumbnail || article.img || article.imageUrl || article.photo || article.newsImage || '/placeholder.jpg',
-            author: article.author || article.authorName || article.author_name || article.writer || article.postedBy || 'Admin',
-            date: article.date || article.createdAt || article.created_at || article.publishedAt || article.published_at || article.publishDate || article.newsDate || new Date().toISOString(),
-            time: article.time || article.readingTime || article.timeAgo || formatDate(article.date || article.createdAt || article.publishedAt),
-            trending: article.trending || article.isTrending || article.is_trending || article.isFeatured || article.featured || false,
-            tags: article.tags || article.keywords || [],
-            views: article.views || article.viewCount || article.view_count || article.readCount || 0,
-        }));
+        // ✅ Map NewsAPI response to our format
+        allArticles = data.articles
+            .filter(article => article.title && article.title !== '[Removed]')
+            .map((article, index) => ({
+                id: `news-${Date.now()}-${index}`,
+                title: article.title || 'No Title',
+                slug: createSlug(article.title),
+                category: normalizedCategory,
+                excerpt: article.description || '',
+                content: article.content || article.description || '',
+                image: article.urlToImage || '/placeholder.jpg',
+                author: article.author || article.source?.name || 'News Agency',
+                date: article.publishedAt || new Date().toISOString(),
+                time: formatDate(article.publishedAt),
+                trending: index < 5,
+                tags: [],
+                views: Math.floor(Math.random() * 1000),
+                sourceUrl: article.url,
+                sourceName: article.source?.name || 'Unknown',
+            }));
 
         isDataFetched = true;
 
         console.log('✅ Loaded:', allArticles.length, 'articles');
-        const cats = [...new Set(allArticles.map(a => a.category))];
-        console.log('📂 Categories:', cats);
         console.log('═══════════════════════════════════════════');
 
         return allArticles;
+
     } catch (error) {
-        console.error('═══════════════════════════════════════════');
-        console.error('❌ ERROR:', error.message);
-        console.error('═══════════════════════════════════════════');
+        console.error('❌ NewsAPI Error:', error.message);
         isDataFetched = false;
+        allArticles = [];
         return [];
     } finally {
         isLoading = false;
@@ -121,78 +132,131 @@ const createSlug = (title) => {
         .toLowerCase()
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-')
-        .replace(/--+/g, '-')
+        .replace(/-+/g, '-')
+        .substring(0, 60)
         .trim();
 };
 
 const formatDate = (dateString) => {
     if (!dateString) return 'Recent';
     try {
-        const date = new Date(dateString);
-        const i18nLang = localStorage.getItem('i18nextLng') || 'en';
-        const locales = { 'en': 'en-US', 'te': 'te-IN', 'hi': 'hi-IN', 'ta': 'ta-IN', 'kn': 'kn-IN' };
-        return date.toLocaleDateString(locales[i18nLang] || 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+        return new Date(dateString).toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
     } catch {
         return 'Recent';
     }
 };
 
+// ✅ Get all articles (for home page)
 export const getAllArticles = async () => {
-    const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
+    console.log('📋 getAllArticles()');
+    await fetchNewsData('home');
     return allArticles;
 };
 
+// ✅ Get articles by category
+export const getArticlesByCategory = async (category, subcategory = null) => {
+    console.log('📁 getArticlesByCategory:', category, subcategory);
+
+    const cat = subcategory || category || 'home';
+    await fetchNewsData(cat, true); // Force refresh for new category
+
+    return allArticles;
+};
+
+// ✅ Get article by slug
 export const getArticleBySlug = async (slug) => {
-    const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
-    return allArticles.find(article => article.slug === slug);
+    console.log('🔍 getArticleBySlug:', slug);
+
+    if (allArticles.length === 0) {
+        await fetchNewsData('home');
+    }
+
+    return allArticles.find(a => a.slug === slug);
 };
 
-export const getArticlesByCategory = async (category) => {
-    const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
-    if (category === 'Home' || !category) return allArticles;
-    return allArticles.filter(article => article.category?.toLowerCase() === category.toLowerCase());
-};
-
+// ✅ Get trending articles
 export const getTrendingArticles = async () => {
-    const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
-    const trending = allArticles.filter(article => article.trending).slice(0, 5);
-    return trending.length > 0 ? trending : allArticles.slice(0, 5);
+    console.log('🔥 getTrendingArticles()');
+
+    if (allArticles.length === 0) {
+        await fetchNewsData('home');
+    }
+
+    return allArticles.filter(a => a.trending).slice(0, 5);
 };
 
-export const getRelatedArticles = async (currentArticleId, category, limit = 3) => {
-    const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
+// ✅ Get related articles
+export const getRelatedArticles = async (id, category, limit = 3) => {
+    console.log('🔗 getRelatedArticles()');
+
     return allArticles
-        .filter(article => article.id !== currentArticleId && article.category?.toLowerCase() === category?.toLowerCase())
+        .filter(a => a.id !== id)
         .slice(0, limit);
 };
 
+// ✅ Search articles
 export const searchArticles = async (query) => {
-    const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
-    const lowerQuery = query.toLowerCase();
-    return allArticles.filter(article =>
-        article.title?.toLowerCase().includes(lowerQuery) ||
-        article.excerpt?.toLowerCase().includes(lowerQuery) ||
-        article.content?.toLowerCase().includes(lowerQuery) ||
-        article.tags?.some(tag => tag.toLowerCase().includes(lowerQuery))
-    );
+    console.log('🔍 searchArticles:', query);
+
+    if (!query) return [];
+
+    // Fetch fresh search results
+    const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=${getCurrentLanguage()}&sortBy=relevancy&pageSize=20&apiKey=${NEWS_API_KEY}`;
+
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.status === 'ok' && data.articles) {
+            return data.articles
+                .filter(article => article.title && article.title !== '[Removed]')
+                .map((article, index) => ({
+                    id: `search-${Date.now()}-${index}`,
+                    title: article.title,
+                    slug: createSlug(article.title),
+                    category: 'search',
+                    excerpt: article.description || '',
+                    image: article.urlToImage || '/placeholder.jpg',
+                    author: article.author || article.source?.name || 'News Agency',
+                    date: article.publishedAt,
+                    time: formatDate(article.publishedAt),
+                }));
+        }
+    } catch (error) {
+        console.error('Search error:', error);
+    }
+
+    return [];
 };
 
-export const getLoadingState = () => isLoading;
-
+// ✅ Refresh data
 export const refreshNewsData = async () => {
     console.log('🔄 Refreshing...');
     isDataFetched = false;
     allArticles = [];
-    currentLanguage = null;
-    return await fetchNewsData(true);
+    currentCategory = null;
+    return await fetchNewsData('home', true);
 };
 
+// Utility exports
+export const getLoadingState = () => isLoading;
 export const getCachedLanguage = () => currentLanguage;
+export const getDataFetchedState = () => isDataFetched;
+export const getCachedArticlesCount = () => allArticles.length;
+
+export const debugState = () => {
+    console.log('═══════════════════════════════════════════');
+    console.log('🐛 DEBUG STATE');
+    console.log('   Loading:', isLoading);
+    console.log('   Fetched:', isDataFetched);
+    console.log('   Language:', currentLanguage);
+    console.log('   Category:', currentCategory);
+    console.log('   Articles:', allArticles.length);
+    console.log('═══════════════════════════════════════════');
+};
 
 export { allArticles };
