@@ -1,61 +1,45 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import NewsCard from '../NewsCard'
+import { fetchNewsData, getArticlesByCategory } from '../../data/newsData'
+import Loader from '../common/Loader'
 
 const CategoryTabs = () => {
     const [activeCategory, setActiveCategory] = useState('All')
+    const [newsData, setNewsData] = useState({})
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     const categories = ['All', 'Politics', 'Business', 'Technology', 'Sports', 'Entertainment', 'Health', 'Science']
 
-    const newsData = {
-        Politics: [
-            {
-                title: "Parliament Passes Historic Education Reform Bill",
-                excerpt: "Major changes in education policy aim to revolutionize learning",
-                image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=400&fit=crop",
-                category: "Politics",
-                time: "1 hour ago"
-            },
-            {
-                title: "State Elections: High Voter Turnout Recorded",
-                excerpt: "Record numbers seen across all constituencies in crucial state polls",
-                image: "https://images.unsplash.com/photo-1495555961986-6d4c37a2ffc1?w=600&h=400&fit=crop",
-                category: "Politics",
-                time: "3 hours ago"
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await fetchNewsData()
+                const fetchedData = {}
+                categories.forEach(category => {
+                    if (category !== 'All') {
+                        fetchedData[category] = getArticlesByCategory(category)
+                    }
+                })
+                setNewsData(fetchedData)
+                setLoading(false)
+            } catch (err) {
+                console.error('Error fetching news data:', err)
+                setError(err.message)
+                setLoading(false)
             }
-        ],
-        Technology: [
-            {
-                title: "Indian Startup Launches Revolutionary AI Platform",
-                excerpt: "New AI technology promises to transform healthcare diagnostics",
-                image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop",
-                category: "Technology",
-                time: "30 mins ago"
-            },
-            {
-                title: "5G Network Coverage Expands to Rural Areas",
-                excerpt: "Digital India initiative reaches new milestone with rural connectivity",
-                image: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&h=400&fit=crop",
-                category: "Technology",
-                time: "2 hours ago"
-            }
-        ],
-        Sports: [
-            {
-                title: "Indian Athletes Shine at International Championship",
-                excerpt: "Record medal haul brings glory to the nation",
-                image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop",
-                category: "Sports",
-                time: "45 mins ago"
-            },
-            {
-                title: "Cricket: New Tournament Format Announced",
-                excerpt: "BCCI unveils exciting changes for upcoming season",
-                image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=600&h=400&fit=crop",
-                category: "Sports",
-                time: "4 hours ago"
-            }
-        ]
+        }
+
+        fetchData()
+    }, [])
+
+    if (loading) {
+        return <Loader />
+    }
+
+    if (error) {
+        return <div className="text-center py-8 text-red-500">Error: {error}</div>
     }
 
     const allNews = Object.values(newsData).flat()

@@ -1,3 +1,5 @@
+// src/components/layout/Footer.jsx
+
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -148,16 +150,23 @@ const Footer = () => {
                     </div>
                 </motion.div>
 
-                {/* Bottom Bar */}
+                {/* Bottom Bar - FIXED: Removed brightness-0 invert */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between border-t border-gray-700 pt-8">
                     <div className="mb-4 md:mb-0">
-                        <Link to="/">
-                            <h2 className="text-2xl font-black mb-2">
-                                <span className="gradient-text">NEWS</span>HUB
-                            </h2>
+                        <Link to="/" className="inline-block group mb-3">
+                            <div className="flex items-center space-x-3">
+                                <img
+                                    src="/iqrar footer.png"
+                                    alt="Iqrar Time Logo"
+                                    className="h-22 w-20 object-contain"
+                                />
+                                <span className="text-2xl font-black text-white group-hover:text-primary transition-colors">
+                                    IQRAR TIMES NEWS
+                                </span>
+                            </div>
                         </Link>
                         <p className="text-gray-400 text-sm">
-                            © 2024 NewsHub. {t('footer.copyright')}
+                            © 2025 Iqrar Times. {t('footer.copyright')}
                         </p>
                     </div>
 

@@ -1,12 +1,41 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useState, useEffect } from 'react'
 import { TrendingUp, Eye } from 'lucide-react'
-import { getTrendingArticles } from '../../data/newsData'
+import { fetchNewsData, getTrendingArticles } from '../../data/newsData'
+import Loader from '../common/Loader'
 
 const TrendingNews = () => {
     const { t } = useTranslation()
-    const trending = getTrendingArticles()
+    const [trending, setTrending] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await fetchNewsData()
+                const fetchedTrending = getTrendingArticles()
+                setTrending(fetchedTrending)
+                setLoading(false)
+            } catch (err) {
+                console.error('Error fetching news data:', err)
+                setError(err.message)
+                setLoading(false)
+            }
+        }
+        
+        fetchData()
+    }, [])
+
+    if (loading) {
+        return <Loader />
+    }
+
+    if (error) {
+        return <div className="text-center py-8 text-red-500">Error: {error}</div>
+    }
 
     return (
         <motion.section

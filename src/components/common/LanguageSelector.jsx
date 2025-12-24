@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { refreshNewsData } from '../../data/newsData';
 
 const LanguageSelector = () => {
     const { i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
+    const [isChanging, setIsChanging] = useState(false);
 
     const languages = [
         { code: 'en', name: 'English', nativeName: 'English' },
@@ -17,19 +19,44 @@ const LanguageSelector = () => {
 
     const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
-    const changeLanguage = (code) => {
-        i18n.changeLanguage(code);
-        setIsOpen(false);
+    const changeLanguage = async (code) => {
+        if (code === i18n.language) {
+            setIsOpen(false);
+            return;
+        }
+
+        setIsChanging(true);
+
+        try {
+            // Change i18n language
+            await i18n.changeLanguage(code);
+
+            // Save to localStorage
+            localStorage.setItem('i18nextLng', code);
+
+            console.log('✅ Language changed to:', code);
+            console.log('🔄 Refreshing news data...');
+
+            // Reload page to fetch new language data
+            window.location.reload();
+        } catch (error) {
+            console.error('Error changing language:', error);
+            setIsChanging(false);
+            setIsOpen(false);
+        }
     };
 
     return (
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                disabled={isChanging}
+                className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
             >
-                <Globe size={18} />
-                <span className="text-sm font-semibold">{currentLanguage.nativeName}</span>
+                <Globe size={18} className={isChanging ? 'animate-spin' : ''} />
+                <span className="text-sm font-semibold">
+                    {isChanging ? 'Loading...' : currentLanguage.nativeName}
+                </span>
             </button>
 
             <AnimatePresence>
@@ -52,7 +79,8 @@ const LanguageSelector = () => {
                                 <button
                                     key={language.code}
                                     onClick={() => changeLanguage(language.code)}
-                                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center justify-between ${i18n.language === language.code ? 'bg-gray-50' : ''
+                                    disabled={isChanging}
+                                    className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center justify-between disabled:opacity-50 ${i18n.language === language.code ? 'bg-primary/10' : ''
                                         }`}
                                 >
                                     <div>

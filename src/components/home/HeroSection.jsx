@@ -1,37 +1,46 @@
 import { motion } from 'framer-motion'
 import { Clock, User, TrendingUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { fetchNewsData, getTrendingArticles } from '../../data/newsData'
+import Loader from '../common/Loader'
 
 const HeroSection = () => {
-    const mainNews = {
-        title: "India's Economic Growth Surpasses Expectations in Q4 2024",
-        excerpt: "The Indian economy shows remarkable resilience with GDP growth reaching 7.8%, making it one of the fastest-growing major economies globally.",
-        image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200&h=600&fit=crop",
-        category: "Economy",
-        author: "Rajesh Kumar",
-        time: "2 hours ago",
-        trending: true
+    const [mainNews, setMainNews] = useState(null);
+    const [sideNews, setSideNews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await fetchNewsData();
+                const trendingArticles = getTrendingArticles();
+                if (trendingArticles.length > 0) {
+                    setMainNews(trendingArticles[0]);
+                    setSideNews(trendingArticles.slice(1, 4));
+                }
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching news data:', err);
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return <Loader />;
     }
 
-    const sideNews = [
-        {
-            title: "Tech Giants Announce Major AI Collaboration",
-            image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
-            category: "Technology",
-            time: "3 hours ago"
-        },
-        {
-            title: "Cricket World Cup: India Defeats Australia in Thriller",
-            image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=400&h=300&fit=crop",
-            category: "Sports",
-            time: "5 hours ago"
-        },
-        {
-            title: "Bollywood Celebrates 100 Years of Cinema",
-            image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400&h=300&fit=crop",
-            category: "Entertainment",
-            time: "6 hours ago"
-        }
-    ]
+    if (error) {
+        return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+    }
+
+    if (!mainNews) {
+        return null;
+    }
 
     return (
         <section className="mt-8">
@@ -98,7 +107,7 @@ const HeroSection = () => {
                             >
                                 <div className="flex items-center space-x-2">
                                     <User size={16} />
-                                    <span>{mainNews.author}</span>
+                                    <span>{mainNews.author.name}</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <Clock size={16} />

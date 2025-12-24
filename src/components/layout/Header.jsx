@@ -140,13 +140,19 @@ const Header = () => {
             {/* Main Header */}
             <div className="border-b bg-white">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex items-center justify-between h-16">
-                        {/* Logo */}
-                        <Link to="/" className="flex-shrink-0">
-                            <h1 className="text-2xl md:text-3xl font-black">
-                                <span className="text-primary">NEWS</span>
-                                <span className="text-secondary">HUB</span>
-                            </h1>
+                    <div className="flex items-center justify-between h-20">
+                        {/* Logo - Updated with Image */}
+                        <Link to="/" className="inline-block group mb-3">
+                            <div className="flex items-center space-x-3">
+                                <img
+                                    src="/iqrar time.png"
+                                    alt="Iqrar Time Logo"
+                                    className="h-22 w-20 object-contain"
+                                />
+                                <span className="text-2xl font-black text-dark group-hover:text-primary transition-colors">
+                                    IQRAR TIMES NEWS
+                                </span>
+                            </div>
                         </Link>
 
                         {/* Desktop Search */}

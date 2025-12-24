@@ -1,30 +1,38 @@
 import { motion } from 'framer-motion'
 import { Play, Clock } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { fetchNewsData, allArticles } from '../../data/newsData'
+import Loader from '../common/Loader'
 
 const VideoSection = () => {
-    const videos = [
-        {
-            title: "Live: Breaking News Coverage",
-            thumbnail: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=400&fit=crop",
-            duration: "LIVE",
-            isLive: true
-        },
-        {
-            title: "Market Analysis: Expert Insights",
-            thumbnail: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=400&fit=crop",
-            duration: "15:30"
-        },
-        {
-            title: "Exclusive Interview with Tech CEO",
-            thumbnail: "https://images.unsplash.com/photo-1560438718-eb61ede255eb?w=600&h=400&fit=crop",
-            duration: "22:45"
-        },
-        {
-            title: "Sports Highlights of the Week",
-            thumbnail: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&h=400&fit=crop",
-            duration: "10:20"
+    const [videos, setVideos] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await fetchNewsData()
+                const fetchedVideos = allArticles.filter(article => article.videos && article.videos.length > 0)
+                setVideos(fetchedVideos.slice(0, 4))
+                setLoading(false)
+            } catch (err) {
+                console.error('Error fetching news data:', err)
+                setError(err.message)
+                setLoading(false)
+            }
         }
-    ]
+
+        fetchData()
+    }, [])
+
+    if (loading) {
+        return <Loader />
+    }
+
+    if (error) {
+        return <div className="text-center py-8 text-red-500">Error: {error}</div>
+    }
 
     return (
         <motion.section
@@ -46,7 +54,7 @@ const VideoSection = () => {
                     >
                         <div className="relative rounded-xl overflow-hidden">
                             <img
-                                src={video.thumbnail}
+                                src={video.image}
                                 alt={video.title}
                                 className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
                             />
@@ -63,7 +71,7 @@ const VideoSection = () => {
                             </motion.div>
 
                             <div className="absolute top-3 right-3">
-                                {video.isLive ? (
+                                {video.videos && video.videos[0] && video.videos[0].url.includes('live') ? (
                                     <motion.span
                                         animate={{ scale: [1, 1.1, 1] }}
                                         transition={{ repeat: Infinity, duration: 1.5 }}
@@ -75,7 +83,7 @@ const VideoSection = () => {
                                 ) : (
                                     <span className="bg-black/80 text-white px-2 py-1 rounded text-xs font-semibold flex items-center space-x-1">
                                         <Clock size={12} />
-                                        <span>{video.duration}</span>
+                                        <span>{video.videos && video.videos[0] ? video.videos[0].duration : '10:00'}</span>
                                     </span>
                                 )}
                             </div>

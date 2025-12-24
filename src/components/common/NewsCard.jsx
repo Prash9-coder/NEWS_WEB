@@ -3,6 +3,14 @@ import { Link } from 'react-router-dom';
 import { Clock, User } from 'lucide-react';
 
 const NewsCard = ({ news, index }) => {
+    // Safe data extraction
+    const authorName = typeof news.author === 'string'
+        ? news.author
+        : news.author?.name || 'Unknown';
+
+    const displayTime = news.time ||
+        (news.date ? new Date(news.date).toLocaleDateString() : 'Recent');
+
     return (
         <motion.article
             initial={{ opacity: 0, y: 20 }}
@@ -12,15 +20,19 @@ const NewsCard = ({ news, index }) => {
         >
             <Link to={`/article/${news.slug}`}>
                 {/* Image */}
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-48 overflow-hidden bg-gray-200">
                     <img
                         src={news.image}
                         alt={news.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                            e.target.src = '/placeholder.jpg';
+                            e.target.onerror = null; // Prevent infinite loop
+                        }}
                     />
                     {/* Category Badge */}
-                    <span className="absolute top-3 left-3 bg-primary text-white px-3 py-1 rounded-md text-xs font-bold uppercase">
-                        {news.category}
+                    <span className="absolute top-3 left-3 bg-primary text-white px-3 py-1 rounded-md text-xs font-bold uppercase shadow-lg">
+                        {news.category || 'News'}
                     </span>
                 </div>
 
@@ -32,19 +44,21 @@ const NewsCard = ({ news, index }) => {
                     </h3>
 
                     {/* Excerpt */}
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                        {news.excerpt}
-                    </p>
+                    {news.excerpt && (
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            {news.excerpt}
+                        </p>
+                    )}
 
                     {/* Meta */}
                     <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t">
                         <div className="flex items-center space-x-1">
                             <User size={14} />
-                            <span>{news.author.name}</span>
+                            <span>{authorName}</span>
                         </div>
                         <div className="flex items-center space-x-1">
                             <Clock size={14} />
-                            <span>{news.time}</span>
+                            <span>{displayTime}</span>
                         </div>
                     </div>
                 </div>

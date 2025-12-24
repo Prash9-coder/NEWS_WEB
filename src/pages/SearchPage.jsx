@@ -1,16 +1,45 @@
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { searchArticles } from '../data/newsData';
+import { useState, useEffect } from 'react';
+import { fetchNewsData, searchArticles } from '../data/newsData';
 import NewsCard from '../components/common/NewsCard';
 import RightSidebar from '../components/layout/RightSidebar';
 import { Search } from 'lucide-react';
+import Loader from '../components/common/Loader';
 
 const SearchPage = () => {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const query = searchParams.get('q') || '';
-    const results = searchArticles(query);
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await fetchNewsData();
+                const fetchedResults = searchArticles(query);
+                setResults(fetchedResults);
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching news data:', err);
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [query]);
+
+    if (loading) {
+        return <Loader />;
+    }
+
+    if (error) {
+        return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+    }
 
     return (
         <div className="mt-[140px] min-h-screen bg-gray-50">
