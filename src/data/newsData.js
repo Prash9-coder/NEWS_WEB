@@ -8,8 +8,8 @@ let isDataFetched = false;
 let currentLanguage = null;
 let currentCategory = null;
 
-// ✅ YOUR FREE API KEY (Get from newsapi.org)
-const NEWS_API_KEY = '3bd1a2f55a75407286651f29d1952b5c'; // Replace this!
+// ✅ News API Key from environment variables
+const NEWS_API_KEY = import.meta.env.NEWS_API_KEY;
 
 const LANGUAGE_MAP = {
     'en': 'en',
