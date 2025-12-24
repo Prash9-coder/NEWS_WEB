@@ -16,42 +16,50 @@ const Header = () => {
     const location = useLocation();
     const dropdownRef = useRef(null);
 
+    // Inside Header component, update mainNavItems:
+
     const mainNavItems = [
-        { name: 'Home', path: '/', icon: null },
-        { name: 'India', path: '/category/india', icon: null },
-        { name: 'World', path: '/category/world', icon: null },
+        { name: t('header.home'), path: '/', icon: null },
+        { name: t('header.india'), path: '/category/india', icon: null },
+        { name: t('header.world'), path: '/category/world', icon: null },
         {
-            name: 'Politics', path: '/category/politics', dropdown: [
-                { name: 'National Politics', path: '/category/politics/national' },
-                { name: 'State Politics', path: '/category/politics/state' },
-                { name: 'Elections', path: '/category/politics/elections' },
-                { name: 'Parliament', path: '/category/politics/parliament' },
+            name: t('header.politics'),
+            path: '/category/politics',
+            dropdown: [
+                { name: t('subCategories.national'), path: '/category/politics/national' },
+                { name: t('subCategories.state'), path: '/category/politics/state' },
+                { name: t('subCategories.elections'), path: '/category/politics/elections' },
+                { name: t('subCategories.parliament'), path: '/category/politics/parliament' },
             ]
         },
-        { name: 'Business', path: '/category/business', icon: null },
-        { name: 'Technology', path: '/category/technology', icon: null },
+        { name: t('header.business'), path: '/category/business', icon: null },
+        { name: t('header.technology'), path: '/category/technology', icon: null },
         {
-            name: 'Sports', path: '/category/sports', dropdown: [
-                { name: 'Cricket', path: '/category/sports/cricket' },
-                { name: 'Football', path: '/category/sports/football' },
-                { name: 'Tennis', path: '/category/sports/tennis' },
-                { name: 'Olympics', path: '/category/sports/olympics' },
-                { name: 'IPL 2024', path: '/category/sports/ipl' },
+            name: t('header.sports'),
+            path: '/category/sports',
+            dropdown: [
+                { name: t('subCategories.cricket'), path: '/category/sports/cricket' },
+                { name: t('subCategories.football'), path: '/category/sports/football' },
+                { name: t('subCategories.tennis'), path: '/category/sports/tennis' },
+                { name: t('subCategories.olympics'), path: '/category/sports/olympics' },
+                { name: t('subCategories.ipl'), path: '/category/sports/ipl' },
             ]
         },
         {
-            name: 'Entertainment', path: '/category/entertainment', dropdown: [
-                { name: 'Bollywood', path: '/category/entertainment/bollywood' },
-                { name: 'Hollywood', path: '/category/entertainment/hollywood' },
-                { name: 'Television', path: '/category/entertainment/television' },
-                { name: 'Music', path: '/category/entertainment/music' },
-                { name: 'Web Series', path: '/category/entertainment/web-series' },
+            name: t('header.entertainment'),
+            path: '/category/entertainment',
+            dropdown: [
+                { name: t('subCategories.bollywood'), path: '/category/entertainment/bollywood' },
+                { name: t('subCategories.hollywood'), path: '/category/entertainment/hollywood' },
+                { name: t('subCategories.television'), path: '/category/entertainment/television' },
+                { name: t('subCategories.music'), path: '/category/entertainment/music' },
+                { name: t('subCategories.webSeries'), path: '/category/entertainment/web-series' },
             ]
         },
-        { name: 'Lifestyle', path: '/category/lifestyle', icon: null },
-        { name: 'Opinion', path: '/opinion', icon: null },
-        { name: 'Videos', path: '/videos', icon: Play },
-        { name: 'Photos', path: '/photos', icon: Camera },
+        { name: t('header.lifestyle'), path: '/category/lifestyle', icon: null },
+        { name: t('header.opinion'), path: '/opinion', icon: null },
+        { name: t('header.videos'), path: '/videos', icon: Play },
+        { name: t('header.photos'), path: '/photos', icon: Camera },
     ];
 
     useEffect(() => {
@@ -141,17 +149,14 @@ const Header = () => {
             <div className="border-b bg-white">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center justify-between h-20">
-                        {/* Logo - Updated with Image */}
-                        <Link to="/" className="inline-block group mb-3">
-                            <div className="flex items-center space-x-3">
+                        {/* Logo - Fixed Responsive Size */}
+                        <Link to="/" className="inline-block group">
+                            <div className="flex items-center">
                                 <img
-                                    src="/iqrar time.png"
+                                    src="/iqrar.png"
                                     alt="Iqrar Time Logo"
-                                    className="h-22 w-20 object-contain"
+                                    className="h-16 md:h-22 lg:h-60 w-auto object-contain mt-16 transition-transform group-hover:scale-200"
                                 />
-                                <span className="text-2xl font-black text-dark group-hover:text-primary transition-colors">
-                                    IQRAR TIMES NEWS
-                                </span>
                             </div>
                         </Link>
 

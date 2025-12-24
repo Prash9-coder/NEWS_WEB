@@ -10,12 +10,12 @@ const Footer = () => {
 
     const footerLinks = {
         categories: [
-            { name: t('header.india'), path: '/category/india' },
-            { name: t('header.world'), path: '/category/world' },
-            { name: t('header.business'), path: '/category/business' },
-            { name: t('header.technology'), path: '/category/technology' },
-            { name: t('header.sports'), path: '/category/sports' },
-            { name: t('header.entertainment'), path: '/category/entertainment' },
+            { name: t('footer.india'), path: '/category/india' },
+            { name: t('footer.world'), path: '/category/world' },
+            { name: t('footer.business'), path: '/category/business' },
+            { name: t('footer.technology'), path: '/category/technology' },
+            { name: t('footer.sports'), path: '/category/sports' },
+            { name: t('footer.entertainment'), path: '/category/entertainment' },
         ],
         company: [
             { name: t('footer.about'), path: '/about' },
@@ -153,16 +153,13 @@ const Footer = () => {
                 {/* Bottom Bar - FIXED: Removed brightness-0 invert */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between border-t border-gray-700 pt-8">
                     <div className="mb-4 md:mb-0">
-                        <Link to="/" className="inline-block group mb-3">
-                            <div className="flex items-center space-x-3">
+                        <Link to="/" className="inline-block group">
+                            <div className="flex items-center">
                                 <img
-                                    src="/iqrar footer.png"
+                                    src="/iqrar1.png"
                                     alt="Iqrar Time Logo"
-                                    className="h-22 w-20 object-contain"
+                                    className="h-16 md:h-22 lg:h-40 w-auto object-contain mt-16 transition-transform group-hover:scale-200"
                                 />
-                                <span className="text-2xl font-black text-white group-hover:text-primary transition-colors">
-                                    IQRAR TIMES NEWS
-                                </span>
                             </div>
                         </Link>
                         <p className="text-gray-400 text-sm">

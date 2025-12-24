@@ -1,63 +1,64 @@
 {
     "header": {
         "home": "హోమ్",
-        "india": "ఇండియా",
-        "world": "వరల్డ్",
-        "business": "బిజినెస్",
+        "india": "భారతదేశం",
+        "world": "ప్రపంచం",
+        "politics": "రాజకీయాలు",
+        "business": "వ్యాపారం",
         "technology": "టెక్నాలజీ",
-        "sports": "స్పోర్ట్స్",
-        "entertainment": "ఎంటర్టైన్మెంట్",
-        "lifestyle": "లైఫ్‌స్టైల్",
+        "sports": "క్రీడలు",
+        "entertainment": "వినోదం",
+        "lifestyle": "జీవనశైలి",
+        "opinion": "అభిప్రాయం",
         "videos": "వీడియోలు",
-        "search": "వార్తలు వెతకండి...",
-        "searchButton": "వెతకండి"
+        "photos": "ఫోటోలు",
+        "trending": "ట్రెండింగ్",
+        "epaper": "ఈ-పేపర్",
+        "livetv": "లైవ్ టీవీ",
+        "search": "వెతకండి",
+        "searchPlaceholder": "వార్తలు, టాపిక్స్, వీడియోలు వెతకండి..."
+    },
+    "subCategories": {
+        "national": "జాతీయ రాజకీయాలు",
+        "state": "రాష్ట్ర రాజకీయాలు",
+        "elections": "ఎన్నికలు",
+        "parliament": "పార్లమెంట్",
+        "cricket": "క్రికెట్",
+        "football": "ఫుట్‌బాల్",
+        "tennis": "టెన్నిస్",
+        "olympics": "ఒలింపిక్స్",
+        "ipl": "ఐపీఎల్ 2024",
+        "bollywood": "బాలీవుడ్",
+        "hollywood": "హాలీవుడ్",
+        "television": "టెలివిజన్",
+        "music": "సంగీతం",
+        "webSeries": "వెబ్ సిరీస్"
     },
     "breaking": {
-        "label": "బ్రేకింగ్"
+        "live": "లైవ్",
+        "breakingNews": "బ్రేకింగ్ న్యూస్"
     },
     "home": {
-        "topStories": "ముఖ్య వార్తలు",
+        "topStories": "టాప్ స్టోరీలు",
         "latestNews": "తాజా వార్తలు",
         "viewAll": "అన్నీ చూడండి",
-        "trending": "ట్రెండింగ్",
-        "videos": "టాప్ వీడియోలు",
-        "newsletter": "అప్‌డేట్‌గా ఉండండి!",
-        "newsletterText": "తాజా వార్తలను పొందడానికి సబ్‌స్క్రైబ్ చేయండి",
-        "subscribe": "సబ్‌స్క్రైబ్ చేయండి"
-    },
-    "article": {
-        "share": "ఈ కథనాన్ని షేర్ చేయండి",
-        "comments": "వ్యాఖ్యలు",
-        "postComment": "వ్యాఖ్య పోస్ట్ చేయండి",
-        "relatedArticles": "సంబంధిత కథనాలు",
-        "readMore": "ఇంకా చదవండి",
-        "views": "సార్లు చూశారు",
-        "readTime": "నిమిషాలు చదవండి"
+        "newsletter": "న్యూస్‌లెటర్",
+        "newsletterText": "తాజా వార్తల కోసం సబ్‌స్క్రైబ్ చేయండి",
+        "subscribe": "సబ్‌స్క్రైబ్"
     },
     "category": {
-        "india": "ఇండియా వార్తలు",
-        "world": "వరల్డ్ వార్తలు",
-        "business": "బిజినెస్ వార్తలు",
-        "technology": "టెక్నాలజీ వార్తలు",
-        "sports": "క్రీడా వార్తలు",
-        "entertainment": "వినోద వార్తలు",
-        "lifestyle": "లైఫ్‌స్టైల్ వార్తలు",
-        "latestFrom": "నుండి తాజా అప్‌డేట్‌లు మరియు బ్రేకింగ్ న్యూస్"
+        "latestFrom": "నుండి తాజా",
+        "articles": "ఆర్టికల్స్",
+        "noArticles": "ఆర్టికల్స్ కనుగొనబడలేదు"
     },
     "footer": {
+        "categories": "కేటగిరీలు",
+        "company": "కంపెనీ",
+        "legal": "చట్టపరమైన",
         "about": "మా గురించి",
         "contact": "సంప్రదించండి",
         "privacy": "గోప్యతా విధానం",
         "terms": "సేవా నిబంధనలు",
-        "categories": "వర్గాలు",
-        "company": "కంపెనీ",
-        "legal": "చట్టపరమైన",
-        "newsletter": "న్యూస్‌లెటర్",
-        "copyright": "అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి."
-    },
-    "notFound": {
-        "title": "పేజీ కనుగొనబడలేదు",
-        "message": "క్షమించండి! మీరు వెతుకుతున్న పేజీ ఉనికిలో లేదు.",
-        "goHome": "హోమ్‌కి వెళ్లండి"
+        "copyright": "అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి"
     }
 }

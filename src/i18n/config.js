@@ -1,3 +1,5 @@
+// src/i18n.js
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -15,19 +17,20 @@ const resources = {
     kn: { translation: translationKN },
 };
 
-// Get saved language from localStorage, default to English
 const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
 
 i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: savedLanguage,      // 👈 Use saved language
-        fallbackLng: 'en',       // 👈 Fallback to English
+        lng: savedLanguage,
+        fallbackLng: 'en',
         debug: false,
         interpolation: {
             escapeValue: false,
         },
     });
 
-export default i18n;
+console.log('🌐 i18n initialized with language:', i18n.language);
+
+export default i18n;  // ✅ FIXED: i18n export cheyyali, config kaadu!

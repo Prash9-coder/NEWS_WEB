@@ -3,61 +3,62 @@
         "home": "होम",
         "india": "भारत",
         "world": "विश्व",
-        "business": "बिज़नेस",
+        "politics": "राजनीति",
+        "business": "व्यापार",
         "technology": "टेक्नोलॉजी",
         "sports": "खेल",
         "entertainment": "मनोरंजन",
-        "lifestyle": "लाइफस्टाइल",
+        "lifestyle": "जीवनशैली",
+        "opinion": "राय",
         "videos": "वीडियो",
-        "search": "समाचार खोजें...",
-        "searchButton": "खोजें"
+        "photos": "फोटो",
+        "trending": "ट्रेंडिंग",
+        "epaper": "ई-पेपर",
+        "livetv": "लाइव टीवी",
+        "search": "खोजें",
+        "searchPlaceholder": "समाचार, विषय, वीडियो खोजें..."
+    },
+    "subCategories": {
+        "national": "राष्ट्रीय राजनीति",
+        "state": "राज्य राजनीति",
+        "elections": "चुनाव",
+        "parliament": "संसद",
+        "cricket": "क्रिकेट",
+        "football": "फुटबॉल",
+        "tennis": "टेनिस",
+        "olympics": "ओलंपिक",
+        "ipl": "आईपीएल 2024",
+        "bollywood": "बॉलीवुड",
+        "hollywood": "हॉलीवुड",
+        "television": "टेलीविजन",
+        "music": "संगीत",
+        "webSeries": "वेब सीरीज"
     },
     "breaking": {
-        "label": "ब्रेकिंग"
+        "live": "लाइव",
+        "breakingNews": "ब्रेकिंग न्यूज"
     },
     "home": {
-        "topStories": "मुख्य समाचार",
+        "topStories": "मुख्य खबरें",
         "latestNews": "ताज़ा खबरें",
         "viewAll": "सभी देखें",
-        "trending": "ट्रेंडिंग",
-        "videos": "टॉप वीडियो",
-        "newsletter": "अपडेट रहें!",
-        "newsletterText": "नवीनतम समाचार प्राप्त करने के लिए सब्सक्राइब करें",
+        "newsletter": "न्यूज़लेटर",
+        "newsletterText": "ताज़ा खबरों के लिए सब्सक्राइब करें",
         "subscribe": "सब्सक्राइब करें"
     },
-    "article": {
-        "share": "इस लेख को शेयर करें",
-        "comments": "टिप्पणियाँ",
-        "postComment": "टिप्पणी पोस्ट करें",
-        "relatedArticles": "संबंधित लेख",
-        "readMore": "और पढ़ें",
-        "views": "बार देखा गया",
-        "readTime": "मिनट पढ़ें"
-    },
     "category": {
-        "india": "भारत समाचार",
-        "world": "विश्व समाचार",
-        "business": "बिज़नेस समाचार",
-        "technology": "टेक्नोलॉजी समाचार",
-        "sports": "खेल समाचार",
-        "entertainment": "मनोरंजन समाचार",
-        "lifestyle": "लाइफस्टाइल समाचार",
-        "latestFrom": "से ताज़ा अपडेट और ब्रेकिंग न्यूज़"
+        "latestFrom": "से ताज़ा खबरें",
+        "articles": "लेख",
+        "noArticles": "कोई लेख नहीं मिला"
     },
     "footer": {
+        "categories": "श्रेणियाँ",
+        "company": "कंपनी",
+        "legal": "कानूनी",
         "about": "हमारे बारे में",
         "contact": "संपर्क करें",
         "privacy": "गोपनीयता नीति",
         "terms": "सेवा की शर्तें",
-        "categories": "श्रेणियाँ",
-        "company": "कंपनी",
-        "legal": "कानूनी",
-        "newsletter": "न्यूज़लेटर",
-        "copyright": "सर्वाधिकार सुरक्षित।"
-    },
-    "notFound": {
-        "title": "पेज नहीं मिला",
-        "message": "क्षमा करें! आप जो पेज खोज रहे हैं वह मौजूद नहीं है।",
-        "goHome": "होम पर जाएं"
+        "copyright": "सर्वाधिकार सुरक्षित"
     }
 }

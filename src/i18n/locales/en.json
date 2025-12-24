@@ -3,61 +3,62 @@
         "home": "Home",
         "india": "India",
         "world": "World",
+        "politics": "Politics",
         "business": "Business",
         "technology": "Technology",
         "sports": "Sports",
         "entertainment": "Entertainment",
         "lifestyle": "Lifestyle",
+        "opinion": "Opinion",
         "videos": "Videos",
-        "search": "Search news...",
-        "searchButton": "Search"
+        "photos": "Photos",
+        "trending": "Trending",
+        "epaper": "E-Paper",
+        "livetv": "Live TV",
+        "search": "Search",
+        "searchPlaceholder": "Search news, topics, videos..."
+    },
+    "subCategories": {
+        "national": "National Politics",
+        "state": "State Politics",
+        "elections": "Elections",
+        "parliament": "Parliament",
+        "cricket": "Cricket",
+        "football": "Football",
+        "tennis": "Tennis",
+        "olympics": "Olympics",
+        "ipl": "IPL 2024",
+        "bollywood": "Bollywood",
+        "hollywood": "Hollywood",
+        "television": "Television",
+        "music": "Music",
+        "webSeries": "Web Series"
     },
     "breaking": {
-        "label": "BREAKING"
+        "live": "LIVE",
+        "breakingNews": "Breaking News"
     },
     "home": {
         "topStories": "Top Stories",
         "latestNews": "Latest News",
         "viewAll": "View All",
-        "trending": "Trending Now",
-        "videos": "Top Videos",
-        "newsletter": "Stay Updated!",
-        "newsletterText": "Subscribe to get latest news delivered to your inbox",
+        "newsletter": "Newsletter",
+        "newsletterText": "Subscribe for the latest news updates",
         "subscribe": "Subscribe"
     },
-    "article": {
-        "share": "Share this article",
-        "comments": "Comments",
-        "postComment": "Post Comment",
-        "relatedArticles": "Related Articles",
-        "readMore": "Read More",
-        "views": "views",
-        "readTime": "min read"
-    },
     "category": {
-        "india": "India News",
-        "world": "World News",
-        "business": "Business News",
-        "technology": "Technology News",
-        "sports": "Sports News",
-        "entertainment": "Entertainment News",
-        "lifestyle": "Lifestyle News",
-        "latestFrom": "Latest updates and breaking news from"
+        "latestFrom": "Latest from",
+        "articles": "Articles",
+        "noArticles": "No articles found"
     },
     "footer": {
+        "categories": "Categories",
+        "company": "Company",
+        "legal": "Legal",
         "about": "About Us",
         "contact": "Contact",
         "privacy": "Privacy Policy",
         "terms": "Terms of Service",
-        "categories": "Categories",
-        "company": "Company",
-        "legal": "Legal",
-        "newsletter": "Newsletter",
-        "copyright": "All rights reserved."
-    },
-    "notFound": {
-        "title": "Page Not Found",
-        "message": "Oops! The page you're looking for doesn't exist.",
-        "goHome": "Go Home"
+        "copyright": "All Rights Reserved"
     }
 }
