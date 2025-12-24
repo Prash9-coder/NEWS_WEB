@@ -11,6 +11,11 @@ let currentCategory = null;
 // ✅ News API Key from environment variables
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 
+// ✅ Check if API key exists on load
+if (!API_KEY) {
+    console.error('❌ VITE_NEWS_API_KEY is missing in .env file!');
+}
+
 const LANGUAGE_MAP = {
     'en': 'en',
     'te': 'en', // Telugu - fallback to English (NewsAPI doesn't support Telugu)
@@ -39,10 +44,16 @@ const getCurrentLanguage = () => {
 
 // ✅ Fetch from NewsAPI
 export const fetchNewsData = async (category = 'home', forceRefresh = false) => {
+    // ✅ Check API key first
+    if (!API_KEY) {
+        console.error('❌ API Key is missing! Add VITE_NEWS_API_KEY to your .env file');
+        return [];
+    }
+
     const apiLanguage = getCurrentLanguage();
     const normalizedCategory = category?.toLowerCase() || 'home';
 
-    // Check cache
+    // Check if already loading
     if (isLoading) {
         console.log('⏳ Already loading...');
         while (isLoading) {
@@ -51,6 +62,7 @@ export const fetchNewsData = async (category = 'home', forceRefresh = false) => 
         return allArticles;
     }
 
+    // Check cache
     if (isDataFetched && !forceRefresh && currentCategory === normalizedCategory) {
         console.log('📦 Using cache:', allArticles.length);
         return allArticles;
@@ -63,8 +75,8 @@ export const fetchNewsData = async (category = 'home', forceRefresh = false) => 
     try {
         const query = CATEGORY_QUERIES[normalizedCategory] || normalizedCategory;
 
-        // ✅ NewsAPI URL
-        const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=${apiLanguage}&sortBy=publishedAt&pageSize=50&apiKey=${NEWS_API_KEY}`;
+        // ✅ NewsAPI URL - Fixed: Using API_KEY instead of NEWS_API_KEY
+        const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=${apiLanguage}&sortBy=publishedAt&pageSize=50&apiKey=${API_KEY}`;
 
         console.log('═══════════════════════════════════════════');
         console.log('📡 NewsAPI Request');
@@ -126,6 +138,7 @@ export const fetchNewsData = async (category = 'home', forceRefresh = false) => 
     }
 };
 
+// ✅ Helper: Create URL-friendly slug
 const createSlug = (title) => {
     if (!title) return 'untitled';
     return title
@@ -137,6 +150,7 @@ const createSlug = (title) => {
         .trim();
 };
 
+// ✅ Helper: Format date
 const formatDate = (dateString) => {
     if (!dateString) return 'Recent';
     try {
@@ -198,14 +212,20 @@ export const getRelatedArticles = async (id, category, limit = 3) => {
         .slice(0, limit);
 };
 
-// ✅ Search articles
+// ✅ Search articles - Fixed: Using API_KEY instead of NEWS_API_KEY
 export const searchArticles = async (query) => {
     console.log('🔍 searchArticles:', query);
 
     if (!query) return [];
 
-    // Fetch fresh search results
-    const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=${getCurrentLanguage()}&sortBy=relevancy&pageSize=20&apiKey=${NEWS_API_KEY}`;
+    // ✅ Check API key
+    if (!API_KEY) {
+        console.error('❌ API Key is missing!');
+        return [];
+    }
+
+    // ✅ Fixed: Using API_KEY
+    const apiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=${getCurrentLanguage()}&sortBy=relevancy&pageSize=20&apiKey=${API_KEY}`;
 
     try {
         const response = await fetch(apiUrl);
@@ -224,10 +244,12 @@ export const searchArticles = async (query) => {
                     author: article.author || article.source?.name || 'News Agency',
                     date: article.publishedAt,
                     time: formatDate(article.publishedAt),
+                    sourceUrl: article.url,
+                    sourceName: article.source?.name || 'Unknown',
                 }));
         }
     } catch (error) {
-        console.error('Search error:', error);
+        console.error('❌ Search error:', error);
     }
 
     return [];
@@ -242,15 +264,17 @@ export const refreshNewsData = async () => {
     return await fetchNewsData('home', true);
 };
 
-// Utility exports
+// ✅ Utility exports
 export const getLoadingState = () => isLoading;
 export const getCachedLanguage = () => currentLanguage;
 export const getDataFetchedState = () => isDataFetched;
 export const getCachedArticlesCount = () => allArticles.length;
 
+// ✅ Debug function
 export const debugState = () => {
     console.log('═══════════════════════════════════════════');
     console.log('🐛 DEBUG STATE');
+    console.log('   API Key:', API_KEY ? '✅ Loaded' : '❌ Missing');
     console.log('   Loading:', isLoading);
     console.log('   Fetched:', isDataFetched);
     console.log('   Language:', currentLanguage);
