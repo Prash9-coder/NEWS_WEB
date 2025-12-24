@@ -1,6 +1,5 @@
 // src/data/newsData.js
 
-// Categories for your website
 export const categories = ['Home', 'India', 'World', 'Business', 'Technology', 'Sports', 'Entertainment', 'Lifestyle'];
 
 let allArticles = [];
@@ -8,7 +7,6 @@ let isLoading = false;
 let isDataFetched = false;
 let currentLanguage = null;
 
-// Language mapping - i18n code to API format
 const LANGUAGE_MAP = {
     'en': 'ENGLISH',
     'te': 'TELUGU',
@@ -17,48 +15,27 @@ const LANGUAGE_MAP = {
     'kn': 'KANNADA'
 };
 
-// Get current language from localStorage or i18n
 const getCurrentLanguage = () => {
     const i18nLang = localStorage.getItem('i18nextLng') || 'en';
     return LANGUAGE_MAP[i18nLang] || 'ENGLISH';
 };
 
-// ✅ API Base URL - Uses environment variable
-const getApiBaseUrl = () => {
-    // Check for Vite environment variable first
-    if (import.meta.env.VITE_API_URL) {
-        return import.meta.env.VITE_API_URL;
-    }
-
-    // Fallback for development
-    if (typeof window !== 'undefined' &&
-        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-        return ''; // Use proxy in development
-    }
-
-    // Default production URL
-    return 'https://api.dhuniya.in';
+// ✅ ALWAYS use proxy path - Works in both dev and production
+const getApiUrl = (language) => {
+    return `/api/news/posts?language=${language}`;
 };
 
-// Check if development mode
-const isDev = typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-// Fetch data from FastAPI backend
 export const fetchNewsData = async (forceRefresh = false) => {
     const apiLanguage = getCurrentLanguage();
 
-    // Check if language changed - refetch if yes
     if (currentLanguage && currentLanguage !== apiLanguage) {
-        console.log('🌐 Language changed from', currentLanguage, 'to', apiLanguage);
+        console.log('🌐 Language changed to:', apiLanguage);
         isDataFetched = false;
         allArticles = [];
-        currentLanguage = apiLanguage;
     }
 
-    // Already fetching or fetched aithe return
     if (isLoading || (isDataFetched && !forceRefresh)) {
-        console.log('📦 Using cached articles:', allArticles.length, '| Language:', currentLanguage);
+        console.log('📦 Cached articles:', allArticles.length);
         return allArticles;
     }
 
@@ -66,75 +43,43 @@ export const fetchNewsData = async (forceRefresh = false) => {
     currentLanguage = apiLanguage;
 
     try {
+        const apiUrl = getApiUrl(apiLanguage);
+
         console.log('═══════════════════════════════════════════');
-        console.log('📡 Fetching news from API...');
-        console.log('🌐 Language Header:', currentLanguage);
-        console.log('🖥️ Mode:', isDev ? 'Development' : 'Production');
+        console.log('📡 Fetching from:', apiUrl);
+        console.log('🌐 Language:', currentLanguage);
 
-        // ✅ Get API URL based on environment
-        const baseUrl = getApiBaseUrl();
-        const apiUrl = isDev && !import.meta.env.VITE_API_URL
-            ? '/api/news/posts'  // Proxy URL for local dev
-            : `${baseUrl}/news/posts`;  // Direct URL for production
+        // ✅ Simple fetch - NO custom headers (CORS safe)
+        const response = await fetch(apiUrl);
 
-        console.log('🔗 API Base URL:', baseUrl || 'Using Proxy');
-        console.log('🔗 Full URL:', apiUrl);
-        console.log('🔗 ENV VITE_API_URL:', import.meta.env.VITE_API_URL || 'Not Set');
-
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'language': currentLanguage,
-                'Accept': 'application/json',
-            },
-            // ✅ Add mode for CORS
-            mode: 'cors',
-        });
-
-        console.log('📥 Response Status:', response.status);
+        console.log('📥 Status:', response.status);
 
         if (!response.ok) {
-            throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
+            throw new Error(`HTTP ${response.status}`);
         }
 
         const data = await response.json();
-
-        console.log('✅ API Response received');
+        console.log('✅ Response received');
         console.log('📊 Success:', data.success);
-        console.log('📊 Total available:', data.total);
+        console.log('📊 Total:', data.total);
 
-        // ✅ Articles are in data.info
         let articlesArray = [];
 
         if (data.info && Array.isArray(data.info)) {
             articlesArray = data.info;
-            console.log('✅ Found articles in data.info:', articlesArray.length);
+            console.log('✅ Found in data.info:', articlesArray.length);
         } else if (Array.isArray(data)) {
             articlesArray = data;
-            console.log('✅ Found articles in root array:', articlesArray.length);
         } else if (data.data && Array.isArray(data.data)) {
             articlesArray = data.data;
-            console.log('✅ Found articles in data.data:', articlesArray.length);
         } else if (data.posts && Array.isArray(data.posts)) {
             articlesArray = data.posts;
-            console.log('✅ Found articles in data.posts:', articlesArray.length);
-        } else {
-            console.log('⚠️ No articles found in response');
-            console.log('📦 Response structure:', Object.keys(data));
-            articlesArray = [];
         }
 
-        // Log first article structure
         if (articlesArray.length > 0) {
-            console.log('═══════════════════════════════════════════');
-            console.log('🔍 FIRST ARTICLE STRUCTURE:');
-            console.log(articlesArray[0]);
-            console.log('🔑 AVAILABLE FIELDS:', Object.keys(articlesArray[0]));
-            console.log('═══════════════════════════════════════════');
+            console.log('🔍 First article keys:', Object.keys(articlesArray[0]));
         }
 
-        // Data mapping - API format to your format
         allArticles = articlesArray.map((article, index) => ({
             id: article.id || article._id || article.post_id || article.newsId || index + 1,
             title: article.title || article.heading || article.headline || article.newsTitle || 'No Title',
@@ -153,30 +98,15 @@ export const fetchNewsData = async (forceRefresh = false) => {
 
         isDataFetched = true;
 
-        console.log('═══════════════════════════════════════════');
-        console.log('✅ SUCCESS! Total Articles Loaded:', allArticles.length);
-
-        // Log mapped first article
-        if (allArticles.length > 0) {
-            console.log('🔄 MAPPED FIRST ARTICLE:');
-            console.log('   Title:', allArticles[0].title);
-            console.log('   Category:', allArticles[0].category);
-            console.log('   Slug:', allArticles[0].slug);
-        }
-
-        // Log all categories found
-        const foundCategories = [...new Set(allArticles.map(a => a.category))];
-        console.log('📂 Categories Found:', foundCategories);
+        console.log('✅ Loaded:', allArticles.length, 'articles');
+        const cats = [...new Set(allArticles.map(a => a.category))];
+        console.log('📂 Categories:', cats);
         console.log('═══════════════════════════════════════════');
 
         return allArticles;
     } catch (error) {
         console.error('═══════════════════════════════════════════');
-        console.error('❌ ERROR FETCHING NEWS:', error.message);
-        console.error('📍 API URL attempted:', getApiBaseUrl());
-        console.error('📍 Environment:', isDev ? 'Development' : 'Production');
-        console.error('📍 VITE_API_URL:', import.meta.env.VITE_API_URL || 'Not Set');
-        console.error('Full Error:', error);
+        console.error('❌ ERROR:', error.message);
         console.error('═══════════════════════════════════════════');
         isDataFetched = false;
         return [];
@@ -185,7 +115,6 @@ export const fetchNewsData = async (forceRefresh = false) => {
     }
 };
 
-// Helper: Create slug from title
 const createSlug = (title) => {
     if (!title) return 'untitled';
     return title
@@ -196,103 +125,55 @@ const createSlug = (title) => {
         .trim();
 };
 
-// Helper: Format date
 const formatDate = (dateString) => {
     if (!dateString) return 'Recent';
     try {
         const date = new Date(dateString);
         const i18nLang = localStorage.getItem('i18nextLng') || 'en';
-
-        // Different date formats for different languages
-        const locales = {
-            'en': 'en-US',
-            'te': 'te-IN',
-            'hi': 'hi-IN',
-            'ta': 'ta-IN',
-            'kn': 'kn-IN'
-        };
-
-        return date.toLocaleDateString(locales[i18nLang] || 'en-US', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        });
+        const locales = { 'en': 'en-US', 'te': 'te-IN', 'hi': 'hi-IN', 'ta': 'ta-IN', 'kn': 'kn-IN' };
+        return date.toLocaleDateString(locales[i18nLang] || 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
     } catch {
         return 'Recent';
     }
 };
 
-// Get all articles (fetch if not loaded)
 export const getAllArticles = async () => {
     const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) {
-        await fetchNewsData();
-    }
+    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
     return allArticles;
 };
 
-// Get article by slug
 export const getArticleBySlug = async (slug) => {
     const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) {
-        await fetchNewsData();
-    }
+    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
     return allArticles.find(article => article.slug === slug);
 };
 
-// Get articles by category
 export const getArticlesByCategory = async (category) => {
     const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) {
-        await fetchNewsData();
-    }
-
+    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
     if (category === 'Home' || !category) return allArticles;
-
-    return allArticles.filter(article =>
-        article.category?.toLowerCase() === category.toLowerCase()
-    );
+    return allArticles.filter(article => article.category?.toLowerCase() === category.toLowerCase());
 };
 
-// Get trending articles - ALWAYS RETURNS ARRAY
 export const getTrendingArticles = async () => {
     const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) {
-        await fetchNewsData();
-    }
-
+    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
     const trending = allArticles.filter(article => article.trending).slice(0, 5);
-
-    // If no trending, return latest 5
-    if (trending.length === 0) {
-        return allArticles.slice(0, 5);
-    }
-
-    return trending;
+    return trending.length > 0 ? trending : allArticles.slice(0, 5);
 };
 
-// Get related articles
 export const getRelatedArticles = async (currentArticleId, category, limit = 3) => {
     const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) {
-        await fetchNewsData();
-    }
-
+    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
     return allArticles
-        .filter(article =>
-            article.id !== currentArticleId &&
-            article.category?.toLowerCase() === category?.toLowerCase()
-        )
+        .filter(article => article.id !== currentArticleId && article.category?.toLowerCase() === category?.toLowerCase())
         .slice(0, limit);
 };
 
-// Search articles
 export const searchArticles = async (query) => {
     const apiLang = getCurrentLanguage();
-    if (!isDataFetched || currentLanguage !== apiLang) {
-        await fetchNewsData();
-    }
-
+    if (!isDataFetched || currentLanguage !== apiLang) await fetchNewsData();
     const lowerQuery = query.toLowerCase();
     return allArticles.filter(article =>
         article.title?.toLowerCase().includes(lowerQuery) ||
@@ -302,42 +183,16 @@ export const searchArticles = async (query) => {
     );
 };
 
-// Get loading state
 export const getLoadingState = () => isLoading;
 
-// Force refresh data
 export const refreshNewsData = async () => {
-    console.log('🔄 Force refreshing data...');
+    console.log('🔄 Refreshing...');
     isDataFetched = false;
     allArticles = [];
     currentLanguage = null;
     return await fetchNewsData(true);
 };
 
-// Get current cached language
 export const getCachedLanguage = () => currentLanguage;
 
-// ✅ Debug function - Check API configuration
-export const debugApiConfig = () => {
-    console.log('═══════════════════════════════════════════');
-    console.log('🔧 API CONFIGURATION DEBUG');
-    console.log('═══════════════════════════════════════════');
-    console.log('📍 VITE_API_URL:', import.meta.env.VITE_API_URL || 'Not Set');
-    console.log('📍 Base URL:', getApiBaseUrl());
-    console.log('📍 Is Development:', isDev);
-    console.log('📍 Current Language:', currentLanguage);
-    console.log('📍 Data Fetched:', isDataFetched);
-    console.log('📍 Articles Count:', allArticles.length);
-    console.log('═══════════════════════════════════════════');
-    return {
-        apiUrl: import.meta.env.VITE_API_URL,
-        baseUrl: getApiBaseUrl(),
-        isDev,
-        currentLanguage,
-        isDataFetched,
-        articlesCount: allArticles.length
-    };
-};
-
-// Export the allArticles array
 export { allArticles };
